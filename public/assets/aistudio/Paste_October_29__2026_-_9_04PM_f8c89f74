@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบบริหารจัดการและต่อใบอนุญาตประกอบกิจการที่เป็นอันตรายต่อสุขภาพ - เทศบาลตำบลพระซอง</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sarabun: ['Sarabun', 'sans-serif'],
+                    },
+                    colors: {
+                        muni: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        gov: {
+                            blue: '#1e3a8a',
+                            gold: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Styles for Official Document Printing */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .print-area, .print-area * {
+                visibility: visible;
+            }
+            .print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+                background: white !important;
+                color: black !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 15mm;
+            }
+            .page-break {
+                page-break-after: always;
+            }
+        }
+
+        .border-double-custom {
+            border: 4px double #1e3a8a;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- TOP HEADER / BANNER -->
+    <header class="bg-gradient-to-r from-emerald-800 via-teal-800 to-emerald-900 text-white shadow-lg no-print">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4 text-center md:text-left">
+                <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center p-2 border-2 border-amber-300/50 shadow-inner flex-shrink-0">
+                    <i class="fa-solid me-0 fa-shield-halved text-3xl text-amber-300"></i>
+                </div>
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-amber-400 text-slate-900 text-xs font-bold px-2.5 py-0.5 rounded-full mb-1">
+                        <i class="fa-solid fa-check-circle"></i> ระบบบริการราชการดิจิทัล (Smart Municipality)
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">ระบบบริการและจัดการต่อใบอนุญาตประกอบกิจการที่เป็นอันตรายต่อสุขภาพ</h1>
+                    <p class="text-emerald-200 text-sm">กองสาธารณสุขและสิ่งแวดล้อม เทศบาลตำบลพระซอง อำเภอนาแก จังหวัดนครพนม</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3 bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm border border-white/10">
+                <div class="text-right text-xs">
+                    <p class="text-emerald-200">เข้าสู่ระบบโดย</p>
+                    <p class="font-semibold text-white">เจ้าพนักงานสาธารณสุข</p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-amber-400 text-emerald-950 font-bold flex items-center justify-center border-2 border-white shadow">
+                    สธ
+                </div>
+            </div>
+        </div>
+
+        <!-- NAVIGATION TABS -->
+        <nav class="bg-emerald-950/60 border-t border-emerald-700/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex space-x-1 overflow-x-auto py-2 text-sm font-medium scrollbar-none">
+                    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-tab px-4 py-2 rounded-lg transition-all flex items-center gap-2 whitespace-nowrap bg-emerald-600 text-white shadow">
+                        <i class="fa-solid fa-chart-pie"></i> แดชบอร์ดภาพรวม
+                    </button>
+                    <button onclick="switchTab('businesses')" id="tab-businesses" class="nav-tab px-4 py-2 rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-emerald-100 hover:bg-emerald-800/60">
+                        <i class="fa-solid fa-store"></i> ทะเบียนผู้ประกอบการ
+                    </button>
+                    <button onclick="switchTab('renew')" id="tab-renew" class="nav-tab px-4 py-2 rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-emerald-100 hover:bg-emerald-800/60">
+                        <i class="fa-solid fa-file-signature"></i> ยื่นต่ออายุ / ตรวจสุขลักษณะ
+                    </button>
+                    <button onclick="switchTab('notifications')" id="tab-notifications" class="nav-tab px-4 py-2 rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-emerald-100 hover:bg-emerald-800/60 relative">
+                        <i class="fa-solid fa-bell"></i> แจ้งเตือนหมดอายุ & LINE
+                        <span id="badge-expiring-count" class="bg-rose-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">0</span>
+                    </button>
+                    <button onclick="switchTab('documents')" id="tab-documents" class="nav-tab px-4 py-2 rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-emerald-100 hover:bg-emerald-800/60">
+                        <i class="fa-solid fa-print"></i> พิมพ์เอกสาร / ออกใบเสร็จ
+                    </button>
+                    <button onclick="switchTab('reports')" id="tab-reports" class="nav-tab px-4 py-2 rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-emerald-100 hover:bg-emerald-800/60">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> รายงานสรุป
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full no-print">
+
+        <!-- ================= PAGE 1: DASHBOARD ================= -->
+        <section id="page-dashboard" class="tab-content space-y-6">
+            <!-- Alert Banner -->
+            <div id="dashboard-alert" class="hidden bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl shadow-sm flex items-start justify-between">
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-500 text-xl mt-0.5"></i>
+                    <div>
+                        <h4 class="font-bold text-amber-800">แจ้งเตือนใบอนุญาตใกล้หมดอายุ!</h4>
+                        <p class="text-sm text-amber-700 mt-0.5" id="dashboard-alert-text">มีใบอนุญาตจำนวน - รายที่กำลังจะหมดอายุภายใน 60 วัน กรุณาตรวจสอบและส่งหนังสือแจ้งเตือน</p>
+                    </div>
+                </div>
+                <button onclick="switchTab('notifications')" class="text-xs bg-amber-600 hover:bg-amber-700 text-white font-medium px-3 py-1.5 rounded-lg transition shadow-sm whitespace-nowrap">
+                    ดูรายการทั้งหมด <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+
+            <!-- Stats Overview Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">ใบอนุญาตทั้งหมด</p>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-1" id="stat-total">0</h3>
+                        <p class="text-xs text-slate-400 mt-1">กิจการในเขตเทศบาล</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-store"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">สถานะปกติ</p>
+                        <h3 class="text-2xl font-bold text-emerald-600 mt-1" id="stat-active">0</h3>
+                        <p class="text-xs text-emerald-600/80 mt-1"><i class="fa-solid fa-check"></i> ยังไม่หมดอายุ</p>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-shield-check"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">ใกล้หมดอายุ</p>
+                        <h3 class="text-2xl font-bold text-amber-500 mt-1" id="stat-expiring">0</h3>
+                        <p class="text-xs text-amber-600/80 mt-1"><i class="fa-solid fa-clock"></i> ภายใน 30-60 วัน</p>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">หมดอายุแล้ว</p>
+                        <h3 class="text-2xl font-bold text-rose-600 mt-1" id="stat-expired">0</h3>
+                        <p class="text-xs text-rose-600/80 mt-1"><i class="fa-solid fa-circle-exclamation"></i> ต้องต่ออายุทันที</p>
+                    </div>
+                    <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between sm:col-span-2 lg:col-span-1">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">รายได้ค่าธรรมเนียมรวม</p>
+                        <h3 class="text-2xl font-bold text-teal-700 mt-1" id="stat-revenue">0 ฿</h3>
+                        <p class="text-xs text-slate-400 mt-1">ปีงบประมาณปัจจุบัน</p>
+                    </div>
+                    <div class="w-12 h-12 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Bar Chart: Business Categories -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 lg:col-span-2 flex flex-col">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-column text-emerald-600"></i> จำนวนกิจการแยกตามประเภท (13 กลุ่มอาชีพ)
+                        </h3>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">พ.ร.บ. สาธารณสุข</span>
+                    </div>
+                    <div class="relative flex-1 min-h-[280px]">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Doughnut Chart: License Status -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-emerald-600"></i> สัดส่วนสถานะใบอนุญาต
+                        </h3>
+                    </div>
+                    <div class="relative flex-1 min-h-[240px] flex items-center justify-center">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Action & Recent Expiring List -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Village Distribution Table -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 lg:col-span-2">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-map-location-dot text-emerald-600"></i> สรุปจำนวนกิจการแยกตามหมู่บ้าน (หมู่ 1 - หมู่ 16 ต.พระซอง)
+                        </h3>
+                        <button onclick="switchTab('businesses')" class="text-xs text-emerald-600 hover:text-emerald-800 font-semibold">
+                            ดูทั้งหมด <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-slate-500 bg-slate-50 uppercase border-b border-slate-100">
+                                <tr>
+                                    <th class="py-2.5 px-3">หมู่ที่ / ชื่อหมู่บ้าน</th>
+                                    <th class="py-2.5 px-3 text-center">กิจการทั้งหมด</th>
+                                    <th class="py-2.5 px-3 text-center">ปกติ</th>
+                                    <th class="py-2.5 px-3 text-center">ใกล้หมดอายุ</th>
+                                    <th class="py-2.5 px-3 text-center">หมดอายุ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="village-summary-body" class="divide-y divide-slate-100 text-slate-700">
+                                <!-- Dynamic JS Insert -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Quick Action Panel -->
+                <div class="bg-gradient-to-br from-emerald-800 to-teal-900 text-white p-6 rounded-2xl shadow-md flex flex-col justify-between">
+                    <div>
+                        <div class="inline-block px-3 py-1 bg-amber-400 text-slate-900 rounded-full text-xs font-bold mb-3">
+                            เมนูด่วน
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">ทำรายการด่วน</h3>
+                        <p class="text-emerald-200 text-sm mb-6">เลือกทำรายการที่ต้องการได้อย่างรวดเร็วเพื่ออำนวยความสะดวกแก่ผู้ประกอบการ</p>
+                        
+                        <div class="space-y-3">
+                            <button onclick="openAddBusinessModal()" class="w-full py-2.5 px-4 bg-white text-emerald-900 hover:bg-emerald-50 rounded-xl font-bold text-sm shadow transition flex items-center justify-between">
+                                <span><i class="fa-solid fa-plus-circle text-emerald-600 mr-2"></i> ลงทะเบียนกิจการใหม่</span>
+                                <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+                            </button>
+                            <button onclick="switchTab('renew')" class="w-full py-2.5 px-4 bg-emerald-700/80 hover:bg-emerald-700 text-white rounded-xl font-semibold text-sm transition flex items-center justify-between border border-emerald-600/50">
+                                <span><i class="fa-solid fa-arrows-rotate mr-2 text-amber-300"></i> บันทึกการต่ออายุ / ตรวจสุขลักษณะ</span>
+                                <i class="fa-solid fa-chevron-right text-xs text-emerald-300"></i>
+                            </button>
+                            <button onclick="switchTab('notifications')" class="w-full py-2.5 px-4 bg-emerald-700/80 hover:bg-emerald-700 text-white rounded-xl font-semibold text-sm transition flex items-center justify-between border border-emerald-600/50">
+                                <span><i class="fa-brands fa-line mr-2 text-emerald-300"></i> ส่งการแจ้งเตือน LINE / SMS</span>
+                                <i class="fa-solid fa-chevron-right text-xs text-emerald-300"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-emerald-700/60 text-xs text-emerald-200 flex items-center justify-between">
+                        <span>เทศบาลตำบลพระซอง</span>
+                        <span>โทร. 042-XXX-XXX</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 2: BUSINESS REGISTER ================= -->
+        <section id="page-businesses" class="tab-content space-y-6 hidden">
+            <!-- Header & Search Controls -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-store text-emerald-600"></i> ทะเบียนผู้ประกอบการกิจการที่เป็นอันตรายต่อสุขภาพ
+                    </h2>
+                    <p class="text-sm text-slate-500">จัดการข้อมูลสถานประกอบการและประวัติใบอนุญาตในเขตเทศบาลตำบลพระซอง</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="openAddBusinessModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-xl text-sm shadow-sm transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> เพิ่มสถานประกอบการใหม่
+                    </button>
+                    <button onclick="resetToSampleData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-2 rounded-xl text-sm transition flex items-center gap-1.5" title="โหลดข้อมูลตัวอย่าง">
+                        <i class="fa-solid fa-rotate-right"></i> รีเซ็ตข้อมูลตัวอย่าง
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">ค้นหา (ชื่อร้าน / ผู้ขอ / เลขใบอนุญาต)</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+                        <input type="text" id="search-input" onkeyup="filterBusinesses()" placeholder="พิมพ์เพื่อค้นหา..." class="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">ประเภทกิจการ</label>
+                    <select id="filter-category" onchange="filterBusinesses()" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="ALL">-- ทุกประเภทกิจการ --</option>
+                        <option value="1. กิจการที่เกี่ยวกับการเลี้ยงสัตว์">1. การเลี้ยงสัตว์</option>
+                        <option value="2. กิจการที่เกี่ยวกับอาหาร เครื่องดื่ม น้ำดื่ม">2. อาหาร เครื่องดื่ม น้ำดื่ม</option>
+                        <option value="3. กิจการที่เกี่ยวกับสถานบริการสาธารณสุข">3. สถานบริการสาธารณสุข</option>
+                        <option value="4. กิจการที่เกี่ยวกับสิ่งทอ">4. สิ่งทอ / ตัดเย็บ</option>
+                        <option value="5. กิจการที่เกี่ยวกับไม้หรือกระดาษ">5. ไม้หรือกระดาษ</option>
+                        <option value="6. กิจการที่เกี่ยวกับงา ช้าง สัตว์ หรือกระดูก">6. งา/กระดูกสัตว์</option>
+                        <option value="7. กิจการที่เกี่ยวกับสารเคมี">7. สารเคมี / คาร์แคร์</option>
+                        <option value="8. กิจการที่เกี่ยวกับโลหะหรือแร่">8. โลหะ / อู่ซ่อมรถ</option>
+                        <option value="9. กิจการที่เกี่ยวกับยานยนต์ เครื่องจักร">9. ยานยนต์ / เครื่องจักร</option>
+                        <option value="10. กิจการที่เกี่ยวกับอิฐ หิน ปูน ทราย">10. อิฐ หิน ปูน ทราย</option>
+                        <option value="11. กิจการที่เกี่ยวกับกระทบกระเทือนผู้คน">11. กิจการส่งเสียงหรือสั่นสะเทือน</option>
+                        <option value="12. กิจการบริการห้องพัก สถานบริการ">12. หอพัก / รีสอร์ท / โรงแรม</option>
+                        <option value="13. กิจการอื่นๆ ตามประกาศกระทรวง">13. กิจการอื่นๆ</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">หมู่บ้าน (ต.พระซอง)</label>
+                    <select id="filter-village" onchange="filterBusinesses()" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="ALL">-- ทุกหมู่บ้าน (หมู่ 1 - 16) --</option>
+                        <!-- Dynamic Village Options -->
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">สถานะใบอนุญาต</label>
+                    <select id="filter-status" onchange="filterBusinesses()" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="ALL">-- ทุกสถานะ --</option>
+                        <option value="ACTIVE">ปกติ (ยังไม่หมดอายุ)</option>
+                        <option value="EXPIRING">ใกล้หมดอายุ (ภายใน 60 วัน)</option>
+                        <option value="EXPIRED">หมดอายุแล้ว</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Business Table -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-slate-600 bg-slate-100 uppercase border-b border-slate-200">
+                            <tr>
+                                <th class="py-3.5 px-4 font-bold">เลขที่ใบอนุญาต</th>
+                                <th class="py-3.5 px-4 font-bold">ชื่อสถานประกอบการ / ผู้ขอ</th>
+                                <th class="py-3.5 px-4 font-bold">ประเภทกิจการ</th>
+                                <th class="py-3.5 px-4 font-bold">ที่อยู่ / หมู่บ้าน</th>
+                                <th class="py-3.5 px-4 font-bold">วันหมดอายุ</th>
+                                <th class="py-3.5 px-4 font-bold text-center">สถานะ</th>
+                                <th class="py-3.5 px-4 font-bold text-center">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="business-table-body" class="divide-y divide-slate-100">
+                            <!-- JS Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="no-business-data" class="hidden p-8 text-center text-slate-400">
+                    <i class="fa-solid fa-folder-open text-4xl mb-2"></i>
+                    <p>ไม่พบข้อมูลสถานประกอบการตรงตามเงื่อนไข</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 3: RENEW & INSPECTION ================= -->
+        <section id="page-renew" class="tab-content space-y-6 hidden">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80">
+                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-file-signature text-emerald-600"></i> ยื่นต่ออายุใบอนุญาต & บันทึกผลการตรวจสุขลักษณะ (อป.1)
+                </h2>
+                <p class="text-sm text-slate-500">บันทึกคำขอต่ออายุ ประเมินตรวจสุขลักษณะสถานที่ และคำนวณค่าธรรมเนียม/ค่าปรับ</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Select Business Panel -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80">
+                    <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2 border-b pb-2">
+                        <span class="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs flex items-center justify-center">1</span>
+                        เลือกสถานประกอบการ
+                    </h3>
+                    
+                    <div class="mb-4">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">เลือกร้านค้าที่ต้องการต่ออายุ</label>
+                        <select id="renew-business-select" onchange="onSelectRenewBusiness()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500">
+                            <option value="">-- เลือกร้านค้า --</option>
+                        </select>
+                    </div>
+
+                    <!-- Display Selected Business Info -->
+                    <div id="renew-selected-info" class="hidden p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-sm">
+                        <div class="flex justify-between items-start border-b pb-2">
+                            <span class="font-bold text-slate-800" id="info-shop-name">-</span>
+                            <span id="info-status-badge"></span>
+                        </div>
+                        <p class="text-xs text-slate-600"><span class="font-semibold">ผู้ขออนุญาต:</span> <span id="info-owner">-</span></p>
+                        <p class="text-xs text-slate-600"><span class="font-semibold">เลขบัตรประชาชน:</span> <span id="info-idcard">-</span></p>
+                        <p class="text-xs text-slate-600"><span class="font-semibold">ประเภท:</span> <span id="info-category">-</span></p>
+                        <p class="text-xs text-slate-600"><span class="font-semibold">ที่อยู่:</span> <span id="info-address">-</span></p>
+                        <p class="text-xs text-slate-600"><span class="font-semibold">วันหมดอายุเดิม:</span> <span id="info-exp-date" class="font-bold text-rose-600">-</span></p>
+                        <p class="text-xs text-slate-600"><span class="font-semibold">อัตราค่าธรรมเนียมเดิม:</span> <span id="info-fee">-</span> บาท/ปี</p>
+                    </div>
+                </div>
+
+                <!-- Form Inspection & Renew -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 lg:col-span-2">
+                    <form id="renew-form" onsubmit="handleRenewSubmit(event)">
+                        <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                            <span class="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs flex items-center justify-center">2</span>
+                            รายละเอียดการตรวจสุขลักษณะ & สรุปค่าธรรมเนียม
+                        </h3>
+
+                        <!-- Form Inspection Section -->
+                        <div class="space-y-4 mb-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">วันที่ตรวจประเมินสุขลักษณะ</label>
+                                    <input type="date" id="renew-inspect-date" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">ชื่อเจ้าพนักงานผู้ตรวจประเมิน</label>
+                                    <input type="text" id="renew-inspector" value="นายสมชาย บริบาล (นักวิชาการสาธารณสุขชำนาญการ)" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">ผลการประเมินสุขลักษณะสถานที่</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                    <label class="flex items-center gap-2 p-2.5 border rounded-lg cursor-pointer bg-emerald-50 border-emerald-300">
+                                        <input type="radio" name="inspect-result" value="PASS" checked class="text-emerald-600">
+                                        <span class="text-xs font-semibold text-emerald-800">ผ่านเกณฑ์มาตรฐาน</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2.5 border rounded-lg cursor-pointer bg-amber-50 border-amber-300">
+                                        <input type="radio" name="inspect-result" value="PASS_COND" class="text-amber-600">
+                                        <span class="text-xs font-semibold text-amber-800">ผ่านแบบมีเงื่อนไข</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2.5 border rounded-lg cursor-pointer bg-rose-50 border-rose-300">
+                                        <input type="radio" name="inspect-result" value="FAIL" class="text-rose-600">
+                                        <span class="text-xs font-semibold text-rose-800">ไม่ผ่านเกณฑ์</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">ข้อเสนอแนะ / ข้อปรับปรุงสุขลักษณะ</label>
+                                <textarea id="renew-notes" rows="2" placeholder="ระบุข้อเสนอแนะเพิ่มเติม (ถ้ามี)..." class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm"></textarea>
+                            </div>
+
+                            <!-- Attach Inspection Photo Simulation -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">แนบภาพถ่ายการตรวจสถานที่ (จำลอง)</label>
+                                <div class="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center bg-slate-50 hover:bg-slate-100 transition cursor-pointer" onclick="document.getElementById('inspect-photo-input').click()">
+                                    <i class="fa-solid fa-camera text-2xl text-slate-400 mb-1"></i>
+                                    <p class="text-xs text-slate-600">คลิกเพื่ออัปโหลดรูปถ่ายการตรวจประเมิน</p>
+                                    <input type="file" id="inspect-photo-input" class="hidden" accept="image/*" onchange="previewPhoto(this)">
+                                </div>
+                                <div id="photo-preview-container" class="hidden mt-2 flex items-center gap-2">
+                                    <img id="photo-preview" class="w-16 h-16 object-cover rounded-lg border">
+                                    <span class="text-xs text-emerald-600 font-semibold"><i class="fa-solid fa-circle-check"></i> แนบไฟล์รูปถ่ายเรียบร้อย</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Calculation Section -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3 mb-6">
+                            <h4 class="font-bold text-slate-800 text-sm border-b pb-2 flex items-center justify-between">
+                                <span>คำนวณยอดเงินที่ต้องชำระ</span>
+                                <span class="text-xs font-normal text-slate-500">* คิดค่าปรับ 20% หากชำระหลังวันหมดอายุ</span>
+                            </h4>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-600">ค่าธรรมเนียมต่ออายุใบอนุญาต (1 ปี):</span>
+                                <span class="font-semibold" id="calc-fee">0.00 บาท</span>
+                            </div>
+                            <div class="flex justify-between text-sm text-rose-600">
+                                <span>ค่าปรับกรณีชำระล่าช้า (ถ้ามี):</span>
+                                <span class="font-semibold" id="calc-fine">0.00 บาท</span>
+                            </div>
+                            <div class="flex justify-between text-base font-bold text-slate-900 border-t border-slate-300 pt-2">
+                                <span>รวมทั้งสิ้นที่ต้องชำระ:</span>
+                                <span class="text-emerald-700 text-lg" id="calc-total">0.00 บาท</span>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="flex justify-end gap-3">
+                            <button type="reset" class="px-4 py-2 border border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100">
+                                ยกเลิก
+                            </button>
+                            <button type="submit" id="btn-save-renew" disabled class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white rounded-xl text-sm font-bold shadow-md transition flex items-center gap-2">
+                                <i class="fa-solid fa-check-circle"></i> บันทึกการต่ออายุ & ออกใบเสร็จ
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 4: NOTIFICATIONS & LINE ================= -->
+        <section id="page-notifications" class="tab-content space-y-6 hidden">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-bell text-amber-500"></i> ระบบแจ้งเตือนวันหมดอายุ & LINE Official Account
+                    </h2>
+                    <p class="text-sm text-slate-500">ตรวจสอบรายการใบอนุญาตที่กำลังจะหมดอายุ พร้อมส่งการแจ้งเตือนผ่าน LINE/SMS</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="sendBulkLineNotification()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm flex items-center gap-2">
+                        <i class="fa-brands fa-line text-lg"></i> ส่งแจ้งเตือน LINE ทั้งหมด
+                    </button>
+                </div>
+            </div>
+
+            <!-- List Expiring Businesses -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+                <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800 text-sm">รายการใบอนุญาตใกล้หมดอายุ (ภายใน 60 วัน) และหมดอายุแล้ว</h3>
+                    <span class="text-xs text-slate-500" id="notification-count-text">พบ 0 รายการ</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-slate-600 bg-slate-100 uppercase border-b border-slate-200">
+                            <tr>
+                                <th class="py-3 px-4">ร้านค้า / ผู้ประกอบการ</th>
+                                <th class="py-3 px-4">เบอร์โทร / LINE ID</th>
+                                <th class="py-3 px-4">วันหมดอายุ</th>
+                                <th class="py-3 px-4">คงเหลือ (วัน)</th>
+                                <th class="py-3 px-4 text-center">สถานะ</th>
+                                <th class="py-3 px-4 text-center">การแจ้งเตือน</th>
+                            </tr>
+                        </thead>
+                        <tbody id="notification-table-body" class="divide-y divide-slate-100">
+                            <!-- JS Insert -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- LINE Simulation & Notification Preview Modal/Box -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- LINE Message Preview -->
+                <div class="bg-slate-900 text-white p-5 rounded-2xl shadow-md border border-slate-800">
+                    <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-slate-900 font-bold">
+                                <i class="fa-brands fa-line"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm">LINE Official: เทศบาลตำบลพระซอง</h4>
+                                <p class="text-xs text-slate-400">ตัวอย่างข้อความแจ้งเตือนอัตโนมัติ</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-emerald-400 bg-emerald-950 px-2.5 py-1 rounded-full border border-emerald-800">LINE API Connected</span>
+                    </div>
+
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 text-xs space-y-2 font-mono leading-relaxed text-slate-200">
+                        <p class="text-amber-400 font-bold">🔔 [แจ้งเตือนต่ออายุใบอนุญาตประกอบกิจการ]</p>
+                        <p>เรียน คุณ<span id="line-preview-name">สมศักดิ์ ค้าขาย</span></p>
+                        <p>สถานประกอบการ: <span id="line-preview-shop" class="font-bold text-white">ร้านสมศักดิ์มินิมาร์ท</span></p>
+                        <p>ใบอนุญาตเลขที่: <span id="line-preview-license">พซ. 67/001</span></p>
+                        <p class="text-rose-400">⚠️ ใบอนุญาตของท่านจะหมดอายุในวันที่: <span id="line-preview-exp">30 พ.ย. 2026</span></p>
+                        <hr class="border-slate-700 my-2">
+                        <p>กรุณายื่นขอต่ออายุใบอนุญาต ณ กองสาธารณสุขและสิ่งแวดล้อม เทศบาลตำบลพระซอง ก่อนวันหมดอายุ เพื่อหลีกเลี่ยงค่าปรับชำระล่าช้า (20%)</p>
+                        <p class="text-emerald-400">สอบถามเพิ่มเติม โทร. 042-XXX-XXX</p>
+                    </div>
+                </div>
+
+                <!-- Print Notice Letter Fast Action -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-envelope-open-text text-emerald-600"></i> ออกหนังสือแจ้งเตือนทางราชการ
+                        </h4>
+                        <p class="text-xs text-slate-500 mb-4">กรณีผู้ประกอบการไม่ได้ใช้ LINE หรือต้องการส่งหนังสือแจ้งเตือนเป็นลายลักษณ์อักษรตามแบบราชการ</p>
+                        
+                        <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs text-amber-800 mb-4">
+                            <i class="fa-solid fa-circle-info mr-1"></i> ระบบจะจัดทำหนังสือราชการภายนอกของเทศบาลตำบลพระซอง พร้อมลงวันเวลาที่กำหนดอัตโนมัติ
+                        </div>
+                    </div>
+
+                    <button onclick="printNoticeLetterFromSelect()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-sm font-bold shadow-sm transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-print"></i> พิมพ์หนังสือแจ้งเตือนต่ออายุใบอนุญาต
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 5: DOCUMENTS & PRINT ================= -->
+        <section id="page-documents" class="tab-content space-y-6 hidden">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80">
+                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-print text-emerald-600"></i> ศูนย์พิมพ์เอกสารราชการ & ใบเสร็จรับเงิน
+                </h2>
+                <p class="text-sm text-slate-500">เลือกพิมพ์ใบอนุญาตประกอบกิจการ ใบเสร็จรับเงิน หรือหนังสือแจ้งเตือนตามรูปแบบมาตรฐานราชการ</p>
+            </div>
+
+            <!-- Select Document Action Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1: License Print -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:border-emerald-500 transition flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl font-bold mb-3">
+                            <i class="fa-solid fa-certificate"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 mb-1">ใบอนุญาตประกอบกิจการ</h3>
+                        <p class="text-xs text-slate-500 mb-4">ออกใบอนุญาตฉบับจริงพร้อมตราครุฑและกรอบมาตรฐานกระทรวงสาธารณสุข</p>
+                    </div>
+                    <div>
+                        <select id="print-license-select" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs mb-3">
+                            <!-- JS Insert -->
+                        </select>
+                        <button onclick="previewDocument('license')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition">
+                            <i class="fa-solid fa-eye mr-1"></i> แสดงตัวอย่าง / สั่งพิมพ์
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Receipt Print -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:border-teal-500 transition flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-xl font-bold mb-3">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 mb-1">ใบเสร็จรับเงิน (เทศบาล)</h3>
+                        <p class="text-xs text-slate-500 mb-4">ออกใบเสร็จรับเงินค่าธรรมเนียมและค่าปรับตามแบบมาตรฐานการเงินการบัญชีท้องถิ่น</p>
+                    </div>
+                    <div>
+                        <select id="print-receipt-select" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs mb-3">
+                            <!-- JS Insert -->
+                        </select>
+                        <button onclick="previewDocument('receipt')" class="w-full py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition">
+                            <i class="fa-solid fa-eye mr-1"></i> แสดงตัวอย่าง / สั่งพิมพ์
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 3: Notice Letter Print -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 hover:border-amber-500 transition flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl font-bold mb-3">
+                            <i class="fa-solid fa-envelope-open-text"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 mb-1">หนังสือแจ้งเตือนต่ออายุ</h3>
+                        <p class="text-xs text-slate-500 mb-4">หนังสือแจ้งเตือนอย่างเป็นทางการส่งถึงผู้ประกอบการล่วงหน้าก่อนหมดอายุ</p>
+                    </div>
+                    <div>
+                        <select id="print-notice-select" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs mb-3">
+                            <!-- JS Insert -->
+                        </select>
+                        <button onclick="previewDocument('notice')" class="w-full py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition">
+                            <i class="fa-solid fa-eye mr-1"></i> แสดงตัวอย่าง / สั่งพิมพ์
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Container Area -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+                <div class="flex items-center justify-between border-b pb-4 mb-6">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf text-rose-600"></i> ตัวอย่างเอกสารก่อนสั่งพิมพ์ (Print Preview)
+                    </h3>
+                    <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-print"></i> พิมพ์เอกสารนี้ (A4)
+                    </button>
+                </div>
+
+                <!-- Interactive Document Container for View/Print -->
+                <div id="document-preview-box" class="bg-slate-100 p-4 sm:p-8 rounded-xl flex justify-center overflow-x-auto min-h-[400px]">
+                    <div class="text-center text-slate-400 my-auto">
+                        <i class="fa-solid fa-file-circle-plus text-5xl mb-2"></i>
+                        <p>กรุณาเลือกรายการและกด "แสดงตัวอย่าง" ด้านบน</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 6: REPORTS & EXPORT ================= -->
+        <section id="page-reports" class="tab-content space-y-6 hidden">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-file-invoice-dollar text-emerald-600"></i> รายงานสรุปการจัดเก็บค่าธรรมเนียม & สถิติ
+                    </h2>
+                    <p class="text-sm text-slate-500">สรุปรายงานประจำเดือน/ประจำปี สำหรับนำเสนอผู้บริหาร กองสาธารณสุขและสิ่งแวดล้อม</p>
+                </div>
+                <div>
+                    <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-file-excel"></i> ส่งออกข้อมูล (CSV / Excel)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Report Summary Table -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+                <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800 text-sm">รายงานการจัดเก็บรายได้ค่าธรรมเนียม จำแนกตามประเภทกิจการ</h3>
+                    <span class="text-xs text-slate-500">เทศบาลตำบลพระซอง</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-slate-600 bg-slate-100 uppercase border-b border-slate-200">
+                            <tr>
+                                <th class="py-3.5 px-4 font-bold">ประเภทกิจการ</th>
+                                <th class="py-3.5 px-4 font-bold text-center">จำนวนสถานประกอบการ</th>
+                                <th class="py-3.5 px-4 font-bold text-right">ค่าธรรมเนียมรวม (บาท)</th>
+                                <th class="py-3.5 px-4 font-bold text-right">ค่าปรับรวม (บาท)</th>
+                                <th class="py-3.5 px-4 font-bold text-right">รายได้รับรวมสุทธิ (บาท)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-category-body" class="divide-y divide-slate-100">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                        <tfoot class="bg-slate-100 font-bold text-slate-900 border-t-2 border-slate-300">
+                            <tr>
+                                <td class="py-3 px-4">รวมทั้งสิ้น</td>
+                                <td class="py-3 px-4 text-center" id="report-total-count">0</td>
+                                <td class="py-3 px-4 text-right" id="report-total-fee">0.00</td>
+                                <td class="py-3 px-4 text-right" id="report-total-fine">0.00</td>
+                                <td class="py-3 px-4 text-right text-emerald-700" id="report-total-net">0.00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-800 text-slate-400 py-4 text-xs text-center border-t border-slate-700 no-print mt-auto">
+        <p>ระบบบริการและจัดการต่อใบอนุญาตประกอบกิจการที่เป็นอันตรายต่อสุขภาพ © เทศบาลตำบลพระซอง อำเภอนาแก จังหวัดนครพนม</p>
+        <p class="mt-1 text-slate-500">กองสาธารณสุขและสิ่งแวดล้อม | งานเทคโนโลยีสารสนเทศเพื่อการบริการประชาชน</p>
+    </footer>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- Modal 1: Add / Edit Business -->
+    <div id="modal-business" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
+        <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-emerald-800 text-white px-6 py-4 flex items-center justify-between">
+                <h3 class="font-bold text-lg" id="modal-title">ลงทะเบียนสถานประกอบการใหม่</h3>
+                <button onclick="closeModal('modal-business')" class="text-emerald-200 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="form-business" onsubmit="saveBusiness(event)" class="p-6 overflow-y-auto space-y-4">
+                <input type="hidden" id="biz-id">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">เลขที่ใบอนุญาต <span class="text-rose-500">*</span></label>
+                        <input type="text" id="biz-license-no" placeholder="เช่น พซ. 67/001" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">ชื่อสถานประกอบการ / ร้าน <span class="text-rose-500">*</span></label>
+                        <input type="text" id="biz-shop-name" placeholder="ชื่อร้านค้า" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">ชื่อ-สกุล ผู้ขออนุญาต <span class="text-rose-500">*</span></label>
+                        <input type="text" id="biz-owner-name" placeholder="นาย / นาง / นางสาว" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">เลขประจำตัวประชาชน (13 หลัก) <span class="text-rose-500">*</span></label>
+                        <input type="text" id="biz-idcard" maxlength="13" placeholder="1350000XXXXXX" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">เบอร์โทรศัพท์ติดต่อ <span class="text-rose-500">*</span></label>
+                        <input type="tel" id="biz-phone" placeholder="081XXXXXXX" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">LINE ID (สำหรับการแจ้งเตือน)</label>
+                        <input type="text" id="biz-line" placeholder="@line_id" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">ประเภทกิจการที่เป็นอันตรายต่อสุขภาพ <span class="text-rose-500">*</span></label>
+                    <select id="biz-category" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                        <option value="">-- เลือกประเภทกิจการ --</option>
+                        <option value="1. กิจการที่เกี่ยวกับการเลี้ยงสัตว์">1. การเลี้ยงสัตว์</option>
+                        <option value="2. กิจการที่เกี่ยวกับอาหาร เครื่องดื่ม น้ำดื่ม">2. อาหาร เครื่องดื่ม น้ำดื่ม</option>
+                        <option value="3. กิจการที่เกี่ยวกับสถานบริการสาธารณสุข">3. สถานบริการสาธารณสุข</option>
+                        <option value="4. กิจการที่เกี่ยวกับสิ่งทอ">4. สิ่งทอ / ตัดเย็บ</option>
+                        <option value="5. กิจการที่เกี่ยวกับไม้หรือกระดาษ">5. ไม้หรือกระดาษ</option>
+                        <option value="6. กิจการที่เกี่ยวกับงา ช้าง สัตว์ หรือกระดูก">6. งา/กระดูกสัตว์</option>
+                        <option value="7. กิจการที่เกี่ยวกับสารเคมี">7. สารเคมี / คาร์แคร์</option>
+                        <option value="8. กิจการที่เกี่ยวกับโลหะหรือแร่">8. โลหะ / อู่ซ่อมรถ</option>
+                        <option value="9. กิจการที่เกี่ยวกับยานยนต์ เครื่องจักร">9. ยานยนต์ / เครื่องจักร</option>
+                        <option value="10. กิจการที่เกี่ยวกับอิฐ หิน ปูน ทราย">10. อิฐ หิน ปูน ทราย</option>
+                        <option value="11. กิจการที่เกี่ยวกับกระทบกระเทือนผู้คน">11. กิจการส่งเสียงหรือสั่นสะเทือน</option>
+                        <option value="12. กิจการบริการห้องพัก สถานบริการ">12. หอพัก / รีสอร์ท / โรงแรม</option>
+                        <option value="13. กิจการอื่นๆ ตามประกาศกระทรวง">13. กิจการอื่นๆ</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">ที่ตั้งร้าน / บ้านเลขที่ / ถนน</label>
+                        <input type="text" id="biz-address" placeholder="เลขที่ ถนน ซอย" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">หมู่บ้าน (ต.พระซอง) <span class="text-rose-500">*</span></label>
+                        <select id="biz-village" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                            <!-- Dynamic Village Options -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">วันที่ออกใบอนุญาตครั้งแรก</label>
+                        <input type="date" id="biz-issue-date" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">วันหมดอายุใบอนุญาต <span class="text-rose-500">*</span></label>
+                        <input type="date" id="biz-exp-date" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">อัตราค่าธรรมเนียม (บาท/ปี) <span class="text-rose-500">*</span></label>
+                        <input type="number" id="biz-fee" min="0" step="50" placeholder="500" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-200 flex justify-end gap-3">
+                    <button type="button" onclick="closeModal('modal-business')" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-xl text-sm font-semibold hover:bg-slate-100">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow transition">
+                        บันทึกข้อมูล
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PRINT CONTAINER (Hidden in Web View, Visible in Print View) -->
+    <div id="printable-area" class="print-area hidden">
+        <!-- Rendered dynamically for A4 printing -->
+    </div>
+
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        // Default Mock Data for Municipality of Phra Song (หมู่ 1 - หมู่ 16)
+        const SAMPLE_BUSINESSES = [
+            {
+                id: '1',
+                licenseNo: 'พซ. 67/001',
+                shopName: 'ร้านพระซองการเกษตรและปุ๋ย',
+                ownerName: 'นายวิชัย สมบูรณ์',
+                idCard: '1350100234561',
+                phone: '0812345678',
+                lineId: 'wichai_phrasong',
+                category: '7. กิจการที่เกี่ยวกับสารเคมี',
+                address: '12/1 ถ.นาแก-พระซอง',
+                village: 'หมู่ 1 บ้านพระซอง',
+                issueDate: '2023-12-01',
+                expDate: '2026-11-15', // Expiring soon
+                fee: 1000,
+                lastInspected: '2023-11-20',
+                inspectStatus: 'PASS'
+            },
+            {
+                id: '2',
+                licenseNo: 'พซ. 67/002',
+                shopName: 'อู่วิชัยการช่าง & คาร์แคร์',
+                ownerName: 'นายสมศักดิ์ ชัยเจริญ',
+                idCard: '1350100456782',
+                phone: '0898765432',
+                lineId: 'somsak_fix',
+                category: '8. กิจการที่เกี่ยวกับโลหะหรือแร่',
+                address: '45 หมู่ 2',
+                village: 'หมู่ 2 บ้านพระซองเหนือ',
+                issueDate: '2023-10-10',
+                expDate: '2026-10-10', // Expired
+                fee: 1500,
+                lastInspected: '2023-10-01',
+                inspectStatus: 'PASS'
+            },
+            {
+                id: '3',
+                licenseNo: 'พซ. 67/003',
+                shopName: 'โรงน้ำดื่มพระซองบริสุทธิ์',
+                ownerName: 'นางนภา พรประเสริฐ',
+                idCard: '1350100789012',
+                phone: '0861122334',
+                lineId: 'napawater',
+                category: '2. กิจการที่เกี่ยวกับอาหาร เครื่องดื่ม น้ำดื่ม',
+                address: '88 หมู่ 3',
+                village: 'หมู่ 3 บ้านพระซองใต้',
+                issueDate: '2024-01-15',
+                expDate: '2027-01-15', // Active
+                fee: 2000,
+                lastInspected: '2024-01-10',
+                inspectStatus: 'PASS'
+            },
+            {
+                id: '4',
+                licenseNo: 'พซ. 67/004',
+                shopName: 'ฟาร์มหมูสมบูรณ์เจริญ',
+                ownerName: 'นายเจริญ หมูทอง',
+                idCard: '1350100998877',
+                phone: '0834455667',
+                lineId: 'charoen_farm',
+                category: '1. กิจการที่เกี่ยวกับการเลี้ยงสัตว์',
+                address: '102 หมู่ 5',
+                village: 'หมู่ 5 บ้านหนองหอย',
+                issueDate: '2023-11-30',
+                expDate: '2026-11-30', // Expiring soon
+                fee: 1200,
+                lastInspected: '2023-11-25',
+                inspectStatus: 'PASS_COND'
+            },
+            {
+                id: '5',
+                licenseNo: 'พซ. 67/005',
+                shopName: 'พระซองรีสอร์ท & ห้องพัก',
+                ownerName: 'นางสาวสุดาพร มณีรัตน์',
+                idCard: '1350100112233',
+                phone: '0879988776',
+                lineId: 'phrasong_resort',
+                category: '12. กิจการบริการห้องพัก สถานบริการ',
+                address: '15/2 หมู่ 8',
+                village: 'หมู่ 8 บ้านโคกกลาง',
+                issueDate: '2024-03-01',
+                expDate: '2027-03-01', // Active
+                fee: 2500,
+                lastInspected: '2024-02-20',
+                inspectStatus: 'PASS'
+            }
+        ];
+
+        // Villages in Phra Song Sub-district (หมู่ 1 - หมู่ 16)
+        const VILLAGES = [
+            'หมู่ 1 บ้านพระซอง',
+            'หมู่ 2 บ้านพระซองเหนือ',
+            'หมู่ 3 บ้านพระซองใต้',
+            'หมู่ 4 บ้านนาคู่',
+            'หมู่ 5 บ้านหนองหอย',
+            'หมู่ 6 บ้านโคกสว่าง',
+            'หมู่ 7 บ้านคำพอก',
+            'หมู่ 8 บ้านโคกกลาง',
+            'หมู่ 9 บ้านคำเม็ก',
+            'หมู่ 10 บ้านโนนงาม',
+            'หมู่ 11 บ้านโพนสว่าง',
+            'หมู่ 12 บ้านดอนพัฒนา',
+            'หมู่ 13 บ้านสร้างเอื่อง',
+            'หมู่ 14 บ้านใหม่พัฒนา',
+            'หมู่ 15 บ้านพระซองเจริญ',
+            'หมู่ 16 บ้านสามัคคี'
+        ];
+
+        let businesses = [];
+        let categoryChartInstance = null;
+        let statusChartInstance = null;
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            initVillagesDropdown();
+            loadBusinesses();
+            renderDashboard();
+            renderBusinessTable();
+            populateRenewDropdown();
+            renderNotifications();
+            populatePrintDropdowns();
+            renderReports();
+        });
+
+        // Initialize Village Dropdowns
+        function initVillagesDropdown() {
+            const filterSelect = document.getElementById('filter-village');
+            const bizSelect = document.getElementById('biz-village');
+            
+            VILLAGES.forEach(v => {
+                const opt1 = document.createElement('option');
+                opt1.value = v;
+                opt1.textContent = v;
+                filterSelect.appendChild(opt1);
+
+                const opt2 = document.createElement('option');
+                opt2.value = v;
+                opt2.textContent = v;
+                bizSelect.appendChild(opt2);
+            });
+        }
+
+        // Load data from LocalStorage or Sample
+        function loadBusinesses() {
+            const stored = localStorage.getItem('phrasong_health_businesses');
+            if (stored) {
+                businesses = JSON.parse(stored);
+            } else {
+                businesses = [...SAMPLE_BUSINESSES];
+                saveToLocalStorage();
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('phrasong_health_businesses', JSON.stringify(businesses));
+        }
+
+        function resetToSampleData() {
+            if (confirm('คุณต้องการรีเซ็ตกลับเป็นข้อมูลตัวอย่างตั้งต้นใช่หรือไม่? (ข้อมูลที่บันทึกใหม่จะถูกลบ)')) {
+                businesses = [...SAMPLE_BUSINESSES];
+                saveToLocalStorage();
+                refreshAllViews();
+                alert('รีเซ็ตข้อมูลเรียบร้อยแล้ว');
+            }
+        }
+
+        function refreshAllViews() {
+            renderDashboard();
+            renderBusinessTable();
+            populateRenewDropdown();
+            renderNotifications();
+            populatePrintDropdowns();
+            renderReports();
+        }
+
+        // Navigation Tab Switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-tab').forEach(el => {
+                el.classList.remove('bg-emerald-600', 'text-white', 'shadow');
+                el.classList.add('text-emerald-100', 'hover:bg-emerald-800/60');
+            });
+
+            document.getElementById(`page-${tabId}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`tab-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.add('bg-emerald-600', 'text-white', 'shadow');
+                activeNav.classList.remove('text-emerald-100', 'hover:bg-emerald-800/60');
+            }
+
+            if (tabId === 'dashboard') {
+                renderDashboard();
+            }
+        }
+
+        // Helper: Status Calculation
+        function getLicenseStatus(expDateStr) {
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const expDate = new Date(expDateStr);
+            expDate.setHours(0,0,0,0);
+
+            const diffTime = expDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) {
+                return { status: 'EXPIRED', days: diffDays, label: 'หมดอายุแล้ว', class: 'bg-rose-100 text-rose-800 border-rose-300' };
+            } else if (diffDays <= 60) {
+                return { status: 'EXPIRING', days: diffDays, label: `ใกล้หมดอายุ (${diffDays} วัน)`, class: 'bg-amber-100 text-amber-800 border-amber-300' };
+            } else {
+                return { status: 'ACTIVE', days: diffDays, label: 'ปกติ', class: 'bg-emerald-100 text-emerald-800 border-emerald-300' };
+            }
+        }
+
+        // Thai Date Formatter
+        function formatThaiDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+            return `${date.getDate()} ${thaiMonths[date.getMonth()]} ${date.getFullYear() + 543}`;
+        }
+
+        // Thai Full Date Formatter
+        function formatThaiFullDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            const thaiFullMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตูลายน', 'พฤศจิกายน', 'ธันวาคม'];
+            return `${date.getDate()} เดือน ${thaiFullMonths[date.getMonth()]} พ.ศ. ${date.getFullYear() + 543}`;
+        }
+
+        // Convert Number to Thai Baht Text
+        function ThaiBahtText(num) {
+            if (!num || isNaN(num)) return 'ศูนย์บาทถ้วน';
+            const numbers = ['ศูนย์', 'หนึ่ง', 'สอง', 'สาม', 'สี่', 'ห้า', 'หก', 'เจ็ด', 'แปด', 'เก้า'];
+            const digits = ['', 'สิบ', 'ร้อย', 'พัน', 'หมื่น', 'แสน', 'ล้าน'];
+            
+            let [integer, fraction] = num.toFixed(2).split('.');
+            let bahtText = '';
+            
+            let len = integer.length;
+            for (let i = 0; i < len; i++) {
+                let digit = parseInt(integer[i]);
+                let pos = len - i - 1;
+                if (digit !== 0) {
+                    if (pos === 1 && digit === 1) bahtText += '';
+                    else if (pos === 1 && digit === 2) bahtText += 'ยี่';
+                    else if (pos === 0 && digit === 1 && len > 1) bahtText += 'เอ็ด';
+                    else bahtText += numbers[digit];
+                    bahtText += digits[pos];
+                }
+            }
+            bahtText += 'บาท';
+
+            if (fraction === '00') {
+                bahtText += 'ถ้วน';
+            } else {
+                let f1 = parseInt(fraction[0]);
+                let f2 = parseInt(fraction[1]);
+                if (f1 !== 0) {
+                    if (f1 === 1) bahtText += '';
+                    else if (f1 === 2) bahtText += 'ยี่';
+                    else bahtText += numbers[f1];
+                    bahtText += 'สิบ';
+                }
+                if (f2 !== 0) {
+                    if (f2 === 1 && f1 !== 0) bahtText += 'เอ็ด';
+                    else bahtText += numbers[f2];
+                }
+                bahtText += 'สตางค์';
+            }
+            return bahtText;
+        }
+
+        // ================= DASHBOARD RENDER =================
+        function renderDashboard() {
+            let activeCount = 0;
+            let expiringCount = 0;
+            let expiredCount = 0;
+            let totalRevenue = 0;
+
+            businesses.forEach(b => {
+                const st = getLicenseStatus(b.expDate);
+                if (st.status === 'ACTIVE') activeCount++;
+                else if (st.status === 'EXPIRING') expiringCount++;
+                else if (st.status === 'EXPIRED') expiredCount++;
+                totalRevenue += (Number(b.fee) || 0);
+            });
+
+            document.getElementById('stat-total').textContent = businesses.length;
+            document.getElementById('stat-active').textContent = activeCount;
+            document.getElementById('stat-expiring').textContent = expiringCount;
+            document.getElementById('stat-expired').textContent = expiredCount;
+            document.getElementById('stat-revenue').textContent = totalRevenue.toLocaleString('th-TH') + ' ฿';
+            
+            document.getElementById('badge-expiring-count').textContent = expiringCount + expiredCount;
+
+            // Alert Banner
+            const alertBox = document.getElementById('dashboard-alert');
+            if (expiringCount + expiredCount > 0) {
+                alertBox.classList.remove('hidden');
+                document.getElementById('dashboard-alert-text').textContent = 
+                    `มีใบอนุญาตใกล้หมดอายุ ${expiringCount} ราย และหมดอายุแล้ว ${expiredCount} ราย ที่ต้องได้รับการดำเนินการล่วงหน้า`;
+            } else {
+                alertBox.classList.add('hidden');
+            }
+
+            renderVillageSummaryTable();
+            renderDashboardCharts(activeCount, expiringCount, expiredCount);
+        }
+
+        function renderVillageSummaryTable() {
+            const tbody = document.getElementById('village-summary-body');
+            tbody.innerHTML = '';
+
+            VILLAGES.forEach(v => {
+                const list = businesses.filter(b => b.village === v);
+                if (list.length > 0) {
+                    let act = 0, exping = 0, expd = 0;
+                    list.forEach(b => {
+                        const st = getLicenseStatus(b.expDate);
+                        if (st.status === 'ACTIVE') act++;
+                        if (st.status === 'EXPIRING') exping++;
+                        if (st.status === 'EXPIRED') expd++;
+                    });
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50";
+                    tr.innerHTML = `
+                        <td class="py-2.5 px-3 font-semibold text-slate-800">${v}</td>
+                        <td class="py-2.5 px-3 text-center font-bold">${list.length}</td>
+                        <td class="py-2.5 px-3 text-center text-emerald-600 font-semibold">${act}</td>
+                        <td class="py-2.5 px-3 text-center text-amber-600 font-semibold">${exping}</td>
+                        <td class="py-2.5 px-3 text-center text-rose-600 font-semibold">${expd}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+        }
+
+        function renderDashboardCharts(activeCount, expiringCount, expiredCount) {
+            // Category Bar Chart
+            const catCounts = {};
+            businesses.forEach(b => {
+                const catShort = b.category.split('.')[0] + '.' + b.category.split('.')[1].substring(0, 12) + '...';
+                catCounts[catShort] = (catCounts[catShort] || 0) + 1;
+            });
+
+            const catCtx = document.getElementById('categoryChart').getContext('2d');
+            if (categoryChartInstance) categoryChartInstance.destroy();
+            
+            categoryChartInstance = new Chart(catCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(catCounts),
+                    datasets: [{
+                        label: 'จำนวนกิจการ (แห่ง)',
+                        data: Object.values(catCounts),
+                        backgroundColor: '#10b981',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+
+            // Status Doughnut Chart
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            if (statusChartInstance) statusChartInstance.destroy();
+
+            statusChartInstance = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['ปกติ', 'ใกล้หมดอายุ', 'หมดอายุแล้ว'],
+                    datasets: [{
+                        data: [activeCount, expiringCount, expiredCount],
+                        backgroundColor: ['#16a34a', '#f59e0b', '#e11d48']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        // ================= BUSINESS REGISTER =================
+        function renderBusinessTable() {
+            const tbody = document.getElementById('business-table-body');
+            tbody.innerHTML = '';
+
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const catFilter = document.getElementById('filter-category').value;
+            const vilFilter = document.getElementById('filter-village').value;
+            const statusFilter = document.getElementById('filter-status').value;
+
+            const filtered = businesses.filter(b => {
+                const matchSearch = b.shopName.toLowerCase().includes(searchTerm) || 
+                                    b.ownerName.toLowerCase().includes(searchTerm) || 
+                                    b.licenseNo.toLowerCase().includes(searchTerm);
+                const matchCat = catFilter === 'ALL' || b.category === catFilter;
+                const matchVil = vilFilter === 'ALL' || b.village === vilFilter;
+                
+                const st = getLicenseStatus(b.expDate);
+                const matchStatus = statusFilter === 'ALL' || st.status === statusFilter;
+
+                return matchSearch && matchCat && matchVil && matchStatus;
+            });
+
+            if (filtered.length === 0) {
+                document.getElementById('no-business-data').classList.remove('hidden');
+            } else {
+                document.getElementById('no-business-data').classList.add('hidden');
+            }
+
+            filtered.forEach(b => {
+                const st = getLicenseStatus(b.expDate);
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-bold text-emerald-800">${b.licenseNo}</td>
+                    <td class="py-3 px-4">
+                        <div class="font-bold text-slate-800">${b.shopName}</div>
+                        <div class="text-xs text-slate-500">ผู้ขอ: ${b.ownerName} (โทร. ${b.phone})</div>
+                    </td>
+                    <td class="py-3 px-4 text-xs text-slate-600 max-w-[200px] truncate" title="${b.category}">
+                        ${b.category}
+                    </td>
+                    <td class="py-3 px-4 text-xs text-slate-600">
+                        ${b.address} <br><span class="font-semibold text-slate-700">${b.village}</span>
+                    </td>
+                    <td class="py-3 px-4 font-medium text-xs">
+                        ${formatThaiDate(b.expDate)}
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="inline-block px-2.5 py-1 rounded-full text-xs font-bold border ${st.class}">
+                            ${st.label}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="openEditBusinessModal('${b.id}')" class="p-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg text-xs" title="แก้ไข">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button onclick="selectBusinessForRenew('${b.id}')" class="p-1.5 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-lg text-xs font-semibold" title="ยื่นต่ออายุ">
+                                <i class="fa-solid fa-arrows-rotate"></i> ต่ออายุ
+                            </button>
+                            <button onclick="deleteBusiness('${b.id}')" class="p-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg text-xs" title="ลบ">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterBusinesses() {
+            renderBusinessTable();
+        }
+
+        // Modal Open / Close
+        function openAddBusinessModal() {
+            document.getElementById('modal-title').textContent = 'ลงทะเบียนสถานประกอบการใหม่';
+            document.getElementById('form-business').reset();
+            document.getElementById('biz-id').value = '';
+            
+            // Auto-generate license number draft
+            const yearTwoDigits = (new Date().getFullYear() + 543).toString().substring(2);
+            document.getElementById('biz-license-no').value = `พซ. ${yearTwoDigits}/${String(businesses.length + 1).padStart(3, '0')}`;
+            
+            // Default exp date 1 year from now
+            const today = new Date();
+            const nextYear = new Date(today.setFullYear(today.getFullYear() + 1));
+            document.getElementById('biz-exp-date').value = nextYear.toISOString().split('T')[0];
+            document.getElementById('biz-issue-date').value = new Date().toISOString().split('T')[0];
+
+            document.getElementById('modal-business').classList.remove('hidden');
+        }
+
+        function openEditBusinessModal(id) {
+            const b = businesses.find(item => item.id === id);
+            if (!b) return;
+
+            document.getElementById('modal-title').textContent = 'แก้ไขข้อมูลสถานประกอบการ';
+            document.getElementById('biz-id').value = b.id;
+            document.getElementById('biz-license-no').value = b.licenseNo;
+            document.getElementById('biz-shop-name').value = b.shopName;
+            document.getElementById('biz-owner-name').value = b.ownerName;
+            document.getElementById('biz-idcard').value = b.idCard;
+            document.getElementById('biz-phone').value = b.phone;
+            document.getElementById('biz-line').value = b.lineId || '';
+            document.getElementById('biz-category').value = b.category;
+            document.getElementById('biz-address').value = b.address;
+            document.getElementById('biz-village').value = b.village;
+            document.getElementById('biz-issue-date').value = b.issueDate;
+            document.getElementById('biz-exp-date').value = b.expDate;
+            document.getElementById('biz-fee').value = b.fee;
+
+            document.getElementById('modal-business').classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function saveBusiness(e) {
+            e.preventDefault();
+            const id = document.getElementById('biz-id').value;
+
+            const bizData = {
+                id: id || Date.now().toString(),
+                licenseNo: document.getElementById('biz-license-no').value,
+                shopName: document.getElementById('biz-shop-name').value,
+                ownerName: document.getElementById('biz-owner-name').value,
+                idCard: document.getElementById('biz-idcard').value,
+                phone: document.getElementById('biz-phone').value,
+                lineId: document.getElementById('biz-line').value,
+                category: document.getElementById('biz-category').value,
+                address: document.getElementById('biz-address').value,
+                village: document.getElementById('biz-village').value,
+                issueDate: document.getElementById('biz-issue-date').value,
+                expDate: document.getElementById('biz-exp-date').value,
+                fee: parseFloat(document.getElementById('biz-fee').value) || 0,
+                lastInspected: new Date().toISOString().split('T')[0],
+                inspectStatus: 'PASS'
+            };
+
+            if (id) {
+                const idx = businesses.findIndex(b => b.id === id);
+                if (idx !== -1) businesses[idx] = bizData;
+            } else {
+                businesses.push(bizData);
+            }
+
+            saveToLocalStorage();
+            closeModal('modal-business');
+            refreshAllViews();
+            alert('บันทึกข้อมูลเรียบร้อยแล้ว');
+        }
+
+        function deleteBusiness(id) {
+            if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลกิจการนี้ออกจากระบบ?')) {
+                businesses = businesses.filter(b => b.id !== id);
+                saveToLocalStorage();
+                refreshAllViews();
+            }
+        }
+
+        // ================= RENEW & INSPECTION =================
+        function populateRenewDropdown() {
+            const select = document.getElementById('renew-business-select');
+            select.innerHTML = '<option value="">-- เลือกร้านค้าที่ต้องการต่ออายุ --</option>';
+
+            businesses.forEach(b => {
+                const st = getLicenseStatus(b.expDate);
+                const opt = document.createElement('option');
+                opt.value = b.id;
+                opt.textContent = `${b.licenseNo} - ${b.shopName} (${b.ownerName}) [${st.label}]`;
+                select.appendChild(opt);
+            });
+        }
+
+        function selectBusinessForRenew(id) {
+            switchTab('renew');
+            const select = document.getElementById('renew-business-select');
+            select.value = id;
+            onSelectRenewBusiness();
+        }
+
+        function onSelectRenewBusiness() {
+            const id = document.getElementById('renew-business-select').value;
+            const infoBox = document.getElementById('renew-selected-info');
+            const btnSave = document.getElementById('btn-save-renew');
+
+            if (!id) {
+                infoBox.classList.add('hidden');
+                btnSave.disabled = true;
+                return;
+            }
+
+            const b = businesses.find(item => item.id === id);
+            if (!b) return;
+
+            infoBox.classList.remove('hidden');
+            btnSave.disabled = false;
+
+            const st = getLicenseStatus(b.expDate);
+
+            document.getElementById('info-shop-name').textContent = b.shopName;
+            document.getElementById('info-owner').textContent = b.ownerName;
+            document.getElementById('info-idcard').textContent = b.idCard;
+            document.getElementById('info-category').textContent = b.category;
+            document.getElementById('info-address').textContent = `${b.address} ${b.village}`;
+            document.getElementById('info-exp-date').textContent = formatThaiDate(b.expDate);
+            document.getElementById('info-fee').textContent = b.fee.toLocaleString('th-TH');
+
+            document.getElementById('info-status-badge').innerHTML = 
+                `<span class="px-2.5 py-1 rounded-full text-xs font-bold border ${st.class}">${st.label}</span>`;
+
+            // Calculate fees & fines
+            const fee = Number(b.fee) || 0;
+            let fine = 0;
+            if (st.status === 'EXPIRED') {
+                fine = fee * 0.20; // 20% fine for overdue
+            }
+
+            document.getElementById('calc-fee').textContent = fee.toLocaleString('th-TH', {minimumFractionDigits: 2}) + ' บาท';
+            document.getElementById('calc-fine').textContent = fine.toLocaleString('th-TH', {minimumFractionDigits: 2}) + ' บาท';
+            document.getElementById('calc-total').textContent = (fee + fine).toLocaleString('th-TH', {minimumFractionDigits: 2}) + ' บาท';
+
+            // Set default inspection date to today
+            document.getElementById('renew-inspect-date').value = new Date().toISOString().split('T')[0];
+        }
+
+        function previewPhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('photo-preview').src = e.target.result;
+                    document.getElementById('photo-preview-container').classList.remove('hidden');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function handleRenewSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('renew-business-select').value;
+            const b = businesses.find(item => item.id === id);
+            if (!b) return;
+
+            const inspectDate = document.getElementById('renew-inspect-date').value;
+            const resultRadio = document.querySelector('input[name="inspect-result"]:checked').value;
+
+            if (resultRadio === 'FAIL') {
+                alert('ไม่สามารถต่ออายุใบอนุญาตได้ เนื่องจากสถานที่ไม่อยู่ในเกณฑ์ผ่านมาตรฐานการประเมินสุขลักษณะ');
+                return;
+            }
+
+            // Extend license date 1 year from current exp date or today
+            let baseDate = new Date(b.expDate);
+            if (baseDate < new Date()) {
+                baseDate = new Date();
+            }
+            baseDate.setFullYear(baseDate.getFullYear() + 1);
+
+            b.expDate = baseDate.toISOString().split('T')[0];
+            b.lastInspected = inspectDate;
+            b.inspectStatus = resultRadio;
+
+            saveToLocalStorage();
+            refreshAllViews();
+
+            alert(`ต่ออายุใบอนุญาตเรียบร้อยแล้ว!\nวันหมดอายุใหม่คือ: ${formatThaiDate(b.expDate)}`);
+            
+            // Switch to print documents
+            switchTab('documents');
+            document.getElementById('print-receipt-select').value = b.id;
+            previewDocument('receipt');
+        }
+
+        // ================= NOTIFICATIONS & LINE =================
+        function renderNotifications() {
+            const tbody = document.getElementById('notification-table-body');
+            tbody.innerHTML = '';
+
+            const expiringList = businesses.filter(b => {
+                const st = getLicenseStatus(b.expDate);
+                return st.status === 'EXPIRING' || st.status === 'EXPIRED';
+            });
+
+            document.getElementById('notification-count-text').textContent = `พบ ${expiringList.length} รายการที่ต้องติดตาม`;
+
+            if (expiringList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">ไม่มีใบอนุญาตที่ต้องแจ้งเตือนในขณะนี้</td></tr>`;
+                return;
+            }
+
+            expiringList.forEach(b => {
+                const st = getLicenseStatus(b.expDate);
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 border-b border-slate-100";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-bold text-slate-800">
+                        ${b.shopName}
+                        <div class="text-xs font-normal text-slate-500">${b.ownerName} (${b.licenseNo})</div>
+                    </td>
+                    <td class="py-3 px-4 text-xs">
+                        <div>โทร. ${b.phone}</div>
+                        <div class="text-emerald-600 font-semibold">LINE: ${b.lineId || '-'}</div>
+                    </td>
+                    <td class="py-3 px-4 text-xs font-semibold">${formatThaiDate(b.expDate)}</td>
+                    <td class="py-3 px-4 text-xs font-bold ${st.days < 0 ? 'text-rose-600' : 'text-amber-600'}">
+                        ${st.days < 0 ? `เกินกำหนด ${Math.abs(st.days)} วัน` : `เหลือ ${st.days} วัน`}
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border ${st.class}">${st.label}</span>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="previewLineMessage('${b.id}')" class="px-2.5 py-1 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 shadow-sm">
+                                <i class="fa-brands fa-line mr-1"></i> LINE
+                            </button>
+                            <button onclick="printNoticeLetter('${b.id}')" class="px-2.5 py-1 bg-slate-800 text-white rounded-lg text-xs font-semibold hover:bg-slate-900 shadow-sm">
+                                <i class="fa-solid fa-print mr-1"></i> พิมพ์หนังสือ
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Set initial preview
+            if (expiringList.length > 0) {
+                previewLineMessage(expiringList[0].id);
+            }
+        }
+
+        function previewLineMessage(id) {
+            const b = businesses.find(item => item.id === id);
+            if (!b) return;
+
+            document.getElementById('line-preview-name').textContent = b.ownerName;
+            document.getElementById('line-preview-shop').textContent = b.shopName;
+            document.getElementById('line-preview-license').textContent = b.licenseNo;
+            document.getElementById('line-preview-exp').textContent = formatThaiDate(b.expDate);
+        }
+
+        function sendBulkLineNotification() {
+            alert('จำลองการส่งการแจ้งเตือนผ่าน LINE Official Account ไปยังผู้ประกอบการรายที่ใกล้หมดอายุเรียบร้อยแล้ว!');
+        }
+
+        function printNoticeLetterFromSelect() {
+            const id = document.getElementById('print-notice-select').value;
+            if (id) {
+                printNoticeLetter(id);
+            } else {
+                alert('กรุณาเลือกร้านค้าที่ต้องการออกหนังสือแจ้งเตือน');
+            }
+        }
+
+        function printNoticeLetter(id) {
+            switchTab('documents');
+            document.getElementById('print-notice-select').value = id;
+            previewDocument('notice');
+        }
+
+        // ================= DOCUMENTS & PRINT PREVIEW =================
+        function populatePrintDropdowns() {
+            const licenseSelect = document.getElementById('print-license-select');
+            const receiptSelect = document.getElementById('print-receipt-select');
+            const noticeSelect = document.getElementById('print-notice-select');
+
+            [licenseSelect, receiptSelect, noticeSelect].forEach(sel => {
+                sel.innerHTML = '<option value="">-- เลือกสถานประกอบการ --</option>';
+                businesses.forEach(b => {
+                    const opt = document.createElement('option');
+                    opt.value = b.id;
+                    opt.textContent = `${b.licenseNo} - ${b.shopName} (${b.ownerName})`;
+                    sel.appendChild(opt);
+                });
+            });
+        }
+
+        function previewDocument(type) {
+            let selectId = '';
+            if (type === 'license') selectId = 'print-license-select';
+            if (type === 'receipt') selectId = 'print-receipt-select';
+            if (type === 'notice') selectId = 'print-notice-select';
+
+            const id = document.getElementById(selectId).value;
+            if (!id) {
+                alert('กรุณาเลือกสถานประกอบการที่ต้องการก่อน');
+                return;
+            }
+
+            const b = businesses.find(item => item.id === id);
+            if (!b) return;
+
+            const box = document.getElementById('document-preview-box');
+            const printArea = document.getElementById('printable-area');
+
+            let htmlContent = '';
+
+            if (type === 'license') {
+                htmlContent = generateLicenseHTML(b);
+            } else if (type === 'receipt') {
+                htmlContent = generateReceiptHTML(b);
+            } else if (type === 'notice') {
+                htmlContent = generateNoticeLetterHTML(b);
+            }
+
+            box.innerHTML = htmlContent;
+            printArea.innerHTML = htmlContent;
+        }
+
+        // Template Generator: Official License Certificate
+        function generateLicenseHTML(b) {
+            return `
+            <div class="bg-white p-8 border-4 border-emerald-900 rounded-none w-[210mm] min-h-[297mm] mx-auto text-slate-900 relative shadow-2xl flex flex-col justify-between font-sarabun" style="box-sizing: border-box;">
+                <!-- Inner Decorative Double Frame -->
+                <div class="border-2 border-emerald-700 p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                        <!-- Header Garuda -->
+                        <div class="text-center mb-4">
+                            <div class="w-20 h-20 mx-auto mb-2 flex items-center justify-center text-emerald-800">
+                                <i class="fa-solid fa-crown text-6xl"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold tracking-wide">ใบอนุญาต</h2>
+                            <p class="text-lg font-bold">ประกอบกิจการที่เป็นอันตรายต่อสุขภาพ</p>
+                            <p class="text-xs text-slate-600 mt-1">ตาม พ.ร.บ. การสาธารณสุข พ.ศ. 2535 และที่แก้ไขเพิ่มเติม</p>
+                        </div>
+
+                        <div class="flex justify-between text-sm font-semibold mb-6 border-b pb-2">
+                            <span>เล่มที่: 01</span>
+                            <span>เลขที่ใบอนุญาต: <strong class="text-emerald-900 font-bold">${b.licenseNo}</strong></span>
+                        </div>
+
+                        <!-- Content Body -->
+                        <div class="space-y-4 text-base leading-relaxed">
+                            <p class="indent-8">
+                                เจ้าพนักงานท้องถิ่นอนุญาตให้ <strong class="text-lg border-b border-dotted border-slate-600 px-2">${b.ownerName}</strong> 
+                                เลขประจำตัวประชาชน <span class="font-mono font-bold">${b.idCard}</span>
+                            </p>
+                            <p>
+                                สถานประกอบการชื่อ <strong class="text-lg border-b border-dotted border-slate-600 px-2">${b.shopName}</strong>
+                            </p>
+                            <p>
+                                ประกอบกิจการประเภท <strong class="border-b border-dotted border-slate-600 px-2">${b.category}</strong>
+                            </p>
+                            <p>
+                                ณ สถานที่ตั้งเลขที่ <span class="border-b border-dotted border-slate-600 px-2">${b.address} ${b.village}</span> 
+                                ตำบลพระซอง อำเภอนาแก จังหวัดนครพนม
+                            </p>
+                            <p class="indent-8">
+                                โดยต้องปฏิบัติตามเงื่อนไข และระเบียบข้อบังคับของเทศบาลตำบลพระซอง ตลอดจนกฎหมายว่าด้วยการสาธารณสุขอย่างเคร่งครัด
+                            </p>
+                        </div>
+
+                        <div class="mt-8 bg-slate-50 p-4 rounded-xl border border-slate-200 text-sm">
+                            <p class="font-bold mb-1">รายละเอียดใบอนุญาต:</p>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <p>• วันที่ออกใบอนุญาต: <strong>${formatThaiDate(b.issueDate)}</strong></p>
+                                <p>• วันที่หมดอายุ: <strong class="text-rose-700">${formatThaiDate(b.expDate)}</strong></p>
+                                <p>• ค่าธรรมเนียม: <strong>${b.fee.toLocaleString('th-TH')} บาท/ปี</strong></p>
+                                <p>• สุขลักษณะ: <strong>ผ่านเกณฑ์มาตรฐาน</strong></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Signature Section -->
+                    <div class="mt-12 text-center text-sm">
+                        <p class="mb-8">ออกให้ ณ วันที่ ${formatThaiFullDate(new Date().toISOString().split('T')[0])}</p>
+                        <div class="inline-block w-64 text-center border-t border-slate-400 pt-2">
+                            <p class="font-bold">(นายกเทศมนตรีตำบลพระซอง)</p>
+                            <p class="text-xs text-slate-600">เจ้าพนักงานท้องถิ่น เทศบาลตำบลพระซอง</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        // Template Generator: Municipality Receipt
+        function generateReceiptHTML(b) {
+            const fee = Number(b.fee) || 0;
+            const st = getLicenseStatus(b.expDate);
+            const fine = st.status === 'EXPIRED' ? fee * 0.20 : 0;
+            const total = fee + fine;
+
+            return `
+            <div class="bg-white p-8 border border-slate-300 w-[210mm] min-h-[297mm] mx-auto text-slate-900 relative shadow-2xl flex flex-col justify-between font-sarabun" style="box-sizing: border-box;">
+                <div>
+                    <!-- Header Receipt -->
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-bold">ใบเสร็จรับเงิน</h2>
+                        <h3 class="text-lg font-semibold text-slate-700">เทศบาลตำบลพระซอง อำเภอนาแก จังหวัดนครพนม</h3>
+                        <p class="text-xs text-slate-500">กองสาธารณสุขและสิ่งแวดล้อม / งานจัดเก็บรายได้</p>
+                    </div>
+
+                    <div class="flex justify-between text-sm mb-6 border-b border-slate-300 pb-2">
+                        <div>
+                            <p><strong>เล่มที่:</strong> 67/05</p>
+                            <p><strong>เลขที่:</strong> ${String(Math.floor(Math.random()*9000)+1000)}</p>
+                        </div>
+                        <div class="text-right">
+                            <p><strong>วันที่:</strong> ${formatThaiFullDate(new Date().toISOString().split('T')[0])}</p>
+                        </div>
+                    </div>
+
+                    <div class="text-sm space-y-2 mb-6">
+                        <p><strong>ได้รับเงินจาก:</strong> ${b.ownerName} (สถานประกอบการ: <strong>${b.shopName}</strong>)</p>
+                        <p><strong>ที่อยู่:</strong> ${b.address} ${b.village} ต.พระซอง อ.นาแก จ.นครพนม</p>
+                        <p><strong>อ้างอิงใบอนุญาตเลขที่:</strong> ${b.licenseNo}</p>
+                    </div>
+
+                    <!-- Payment Items Table -->
+                    <table class="w-full text-sm border-collapse border border-slate-300 mb-6">
+                        <thead>
+                            <tr class="bg-slate-100 border-b border-slate-300 text-center font-bold">
+                                <th class="border border-slate-300 p-2.5 w-12">ลำดับ</th>
+                                <th class="border border-slate-300 p-2.5">รายการชำระ</th>
+                                <th class="border border-slate-300 p-2.5 w-32 text-right">จำนวนเงิน (บาท)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-slate-300 p-2.5 text-center">1</td>
+                                <td class="border border-slate-300 p-2.5">
+                                    ค่าธรรมเนียมใบอนุญาตประกอบกิจการที่เป็นอันตรายต่อสุขภาพ<br>
+                                    <span class="text-xs text-slate-500">(${b.category})</span>
+                                </td>
+                                <td class="border border-slate-300 p-2.5 text-right font-mono">${fee.toLocaleString('th-TH', {minimumFractionDigits: 2})}</td>
+                            </tr>
+                            ${fine > 0 ? `
+                            <tr>
+                                <td class="border border-slate-300 p-2.5 text-center">2</td>
+                                <td class="border border-slate-300 p-2.5">
+                                    ค่าปรับการยื่นต่ออายุใบอนุญาตล่าช้า (20%)
+                                </td>
+                                <td class="border border-slate-300 p-2.5 text-right font-mono text-rose-600">${fine.toLocaleString('th-TH', {minimumFractionDigits: 2})}</td>
+                            </tr>
+                            ` : ''}
+                        </tbody>
+                        <tfoot>
+                            <tr class="font-bold bg-slate-50">
+                                <td colspan="2" class="border border-slate-300 p-2.5 text-right">รวมเงินทั้งสิ้น (บาท):</td>
+                                <td class="border border-slate-300 p-2.5 text-right font-mono text-emerald-800 text-base">${total.toLocaleString('th-TH', {minimumFractionDigits: 2})}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="p-3 bg-slate-100 rounded-lg text-sm font-semibold border border-slate-200">
+                        (ตัวอักษร: ${ThaiBahtText(total)})
+                    </div>
+                </div>
+
+                <!-- Footer Signature -->
+                <div class="grid grid-cols-2 gap-8 text-center text-sm pt-12 border-t border-slate-200">
+                    <div>
+                        <p class="mb-12">ลงชื่อ..........................................................ผู้ชำระเงิน</p>
+                        <p>(${b.ownerName})</p>
+                    </div>
+                    <div>
+                        <p class="mb-12">ลงชื่อ..........................................................ผู้รับเงิน</p>
+                        <p>(เจ้าพนักงานจัดเก็บรายได้)</p>
+                        <p class="text-xs text-slate-500">เทศบาลตำบลพระซอง</p>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        // Template Generator: Official Notice Letter
+        function generateNoticeLetterHTML(b) {
+            return `
+            <div class="bg-white p-10 border border-slate-300 w-[210mm] min-h-[297mm] mx-auto text-slate-900 relative shadow-2xl flex flex-col justify-between font-sarabun text-sm leading-relaxed" style="box-sizing: border-box;">
+                <div>
+                    <!-- Garuda Icon -->
+                    <div class="text-center mb-6">
+                        <i class="fa-solid fa-crown text-5xl text-slate-800"></i>
+                    </div>
+
+                    <!-- Official Header -->
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <p>ที่ นพ 53804/............</p>
+                        </div>
+                        <div class="text-right">
+                            <p>สำนักงานเทศบาลตำบลพระซอง</p>
+                            <p>อำเภอนาแก จังหวัดนครพนม 48130</p>
+                        </div>
+                    </div>
+
+                    <div class="text-center my-4 font-bold">
+                        <p>${formatThaiFullDate(new Date().toISOString().split('T')[0])}</p>
+                    </div>
+
+                    <div class="space-y-2 mb-6">
+                        <p><strong>เรื่อง</strong> แจ้งเตือนให้ดำเนินการต่ออายุใบอนุญาตประกอบกิจการที่เป็นอันตรายต่อสุขภาพ</p>
+                        <p><strong>เรียน</strong> คุณ${b.ownerName} (ผู้ขออนุญาตสถานประกอบการ "${b.shopName}")</p>
+                    </div>
+
+                    <!-- Letter Body -->
+                    <div class="space-y-4 indent-8 text-justify">
+                        <p>
+                            ตามที่ท่านได้ขออนุญาตประกอบกิจการที่เป็นอันตรายต่อสุขภาพ ประเภท <strong>${b.category}</strong> 
+                            ณ สถานที่ตั้ง ${b.address} ${b.village} ตำบลพระซอง อำเภอนาแก จังหวัดนครพนม ตามใบอนุญาตเลขที่ <strong>${b.licenseNo}</strong> นั้น
+                        </p>
+                        <p>
+                            เทศบาลตำบลพระซอง ขอเรียนให้ท่านทราบว่า ใบอนุญาตประกอบกิจการฯ ของท่านกำลังจะหมดอายุลงในวันที่ <strong class="text-rose-700">${formatThaiDate(b.expDate)}</strong> 
+                            ดังนั้น เพื่อให้การประกอบกิจการของท่านเป็นไปอย่างถูกต้องตาม พระราชบัญญัติการสาธารณสุข พ.ศ. 2535 และเทศบัญญัติเทศบาลตำบลพระซอง
+                        </p>
+                        <p>
+                            จึงขอให้ท่านดำเนินการยื่นคำขอต่ออายุใบอนุญาต ณ กองสาธารณสุขและสิ่งแวดล้อม สำนักงานเทศบาลตำบลพระซอง ภายในกำหนดเวลาดังกล่าว หากพ้นกำหนดเวลาวันหมดอายุ ท่านจะต้องชำระค่าปรับตามกฎหมายเพิ่มเติมในอัตราร้อยละ 20 ของค่าธรรมเนียม
+                        </p>
+                        <p>
+                            จึงเรียนมาเพื่อโปรดทราบและดำเนินการต่อไป
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-12">
+                    <div class="inline-block w-64 text-center border-t border-slate-400 pt-2">
+                        <p class="font-bold">(นายกเทศมนตรีตำบลพระซอง)</p>
+                        <p class="text-xs text-slate-600">เจ้าพนักงานท้องถิ่น เทศบาลตำบลพระซอง</p>
+                    </div>
+                    <div class="text-left text-xs text-slate-500 mt-8">
+                        <p>กองสาธารณสุขและสิ่งแวดล้อม</p>
+                        <p>โทร. 042-XXX-XXX ต่อ 104</p>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        // ================= REPORTS & EXPORT =================
+        function renderReports() {
+            const tbody = document.getElementById('report-category-body');
+            tbody.innerHTML = '';
+
+            const categories = [
+                '1. กิจการที่เกี่ยวกับการเลี้ยงสัตว์',
+                '2. กิจการที่เกี่ยวกับอาหาร เครื่องดื่ม น้ำดื่ม',
+                '3. กิจการที่เกี่ยวกับสถานบริการสาธารณสุข',
+                '4. กิจการที่เกี่ยวกับสิ่งทอ',
+                '5. กิจการที่เกี่ยวกับไม้หรือกระดาษ',
+                '6. กิจการที่เกี่ยวกับงา ช้าง สัตว์ หรือกระดูก',
+                '7. กิจการที่เกี่ยวกับสารเคมี',
+                '8. กิจการที่เกี่ยวกับโลหะหรือแร่',
+                '9. กิจการที่เกี่ยวกับยานยนต์ เครื่องจักร',
+                '10. กิจการที่เกี่ยวกับอิฐ หิน ปูน ทราย',
+                '11. กิจการที่เกี่ยวกับกระทบกระเทือนผู้คน',
+                '12. กิจการบริการห้องพัก สถานบริการ',
+                '13. กิจการอื่นๆ ตามประกาศกระทรวง'
+            ];
+
+            let grandCount = 0;
+            let grandFee = 0;
+            let grandFine = 0;
+
+            categories.forEach(cat => {
+                const list = businesses.filter(b => b.category === cat);
+                if (list.length > 0) {
+                    let totalFee = 0;
+                    let totalFine = 0;
+
+                    list.forEach(b => {
+                        const fee = Number(b.fee) || 0;
+                        const st = getLicenseStatus(b.expDate);
+                        const fine = st.status === 'EXPIRED' ? fee * 0.20 : 0;
+
+                        totalFee += fee;
+                        totalFine += fine;
+                    });
+
+                    const net = totalFee + totalFine;
+
+                    grandCount += list.length;
+                    grandFee += totalFee;
+                    grandFine += totalFine;
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50";
+                    tr.innerHTML = `
+                        <td class="py-3 px-4 font-semibold text-slate-800">${cat}</td>
+                        <td class="py-3 px-4 text-center font-bold">${list.length}</td>
+                        <td class="py-3 px-4 text-right font-mono">${totalFee.toLocaleString('th-TH', {minimumFractionDigits:2})}</td>
+                        <td class="py-3 px-4 text-right font-mono text-rose-600">${totalFine.toLocaleString('th-TH', {minimumFractionDigits:2})}</td>
+                        <td class="py-3 px-4 text-right font-mono font-bold text-emerald-800">${net.toLocaleString('th-TH', {minimumFractionDigits:2})}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+
+            document.getElementById('report-total-count').textContent = grandCount;
+            document.getElementById('report-total-fee').textContent = grandFee.toLocaleString('th-TH', {minimumFractionDigits:2});
+            document.getElementById('report-total-fine').textContent = grandFine.toLocaleString('th-TH', {minimumFractionDigits:2});
+            document.getElementById('report-total-net').textContent = (grandFee + grandFine).toLocaleString('th-TH', {minimumFractionDigits:2});
+        }
+
+        // Export Data to CSV (Excel format with UTF-8 BOM)
+        function exportToCSV() {
+            let csvContent = "\uFEFF"; // UTF-8 BOM for Thai Excel support
+            csvContent += "เลขที่ใบอนุญาต,ชื่อสถานประกอบการ,ผู้ขออนุญาต,เลขบัตรประชาชน,เบอร์โทร,ประเภทกิจการ,ที่อยู่,หมู่บ้าน,วันหมดอายุ,ค่าธรรมเนียม(บาท),สถานะ\n";
+
+            businesses.forEach(b => {
+                const st = getLicenseStatus(b.expDate);
+                const row = [
+                    `"${b.licenseNo}"`,
+                    `"${b.shopName}"`,
+                    `"${b.ownerName}"`,
+                    `"${b.idCard}"`,
+                    `"${b.phone}"`,
+                    `"${b.category}"`,
+                    `"${b.address}"`,
+                    `"${b.village}"`,
+                    `"${b.expDate}"`,
+                    `"${b.fee}"`,
+                    `"${st.label}"`
+                ].join(",");
+                csvContent += row + "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `รายงานผู้ประกอบการ_เทศบาลตำบลพระซอง_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
